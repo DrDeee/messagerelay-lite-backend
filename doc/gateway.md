@@ -37,3 +37,8 @@
   "id": 1313131313,
 }
 ```
+
+## Backend Verification
+
+As soon as you get a websocket code via websocket you can do a POST against `/api/v1/auth/gateway/backend` with params `code` and `token`:
+`/api/v1/auth/gateway/backend?code=234324feaef&token=blablabla`

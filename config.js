@@ -1,4 +1,5 @@
 module.exports = {
     port: 80,
-    authToken: 'blablabla'
+    authToken: 'blablabla',
+    publicKeyFile: 'key.pub'
 }

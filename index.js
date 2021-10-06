@@ -1,6 +1,7 @@
 const { parse } = require('url')
 const { WebSocketServer } = require('ws')
 const express = require('express')
+const cors = require('cors')
 
 const config = require('./config')
 const WebSocketManager = require('./websocket')
@@ -12,6 +13,7 @@ const wsManager = new WebSocketManager(wss)
 const app = express()
 
 app.use(express.json())
+app.use(cors())
 
 app.use('/api/v1/', initEndpoints(wsManager))
 
