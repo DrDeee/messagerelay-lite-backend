@@ -15,17 +15,25 @@ const jwtCheck = jwt({
     algorithms: ["RS256"]
 })
 
-module.exports = {
-    jwt: [jwtCheck],
-    requireCTF: [(req, res, next) => {
-        if (req.user.groups != undefined && req.user.groups.includes('ctf')) {
-            next()
-            return
-        } else {
-            res.status(403).json({
-                msg: 'Not a CTF member'
-            })
-        }
+const errorCheck = (err, req, res, next) => {
+    if (err.name === 'UnauthorizedError') {
+        res.status(401).json({
+            msg: 'Invalid auth token'
+        });
+    }
+}
 
-    }]
+module.exports = {
+    jwt: [jwtCheck, errorCheck],
+    /*    requireCTF: [(req, res, next) => {
+           if (req.user.groups != undefined && req.user.groups.includes('ctf')) {
+               next()
+               return
+           } else {
+               res.status(403).json({
+                   msg: 'Not a CTF member'
+               })
+           }
+
+       }] */
 }

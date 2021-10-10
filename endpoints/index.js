@@ -1,12 +1,16 @@
 const express = require('express')
 
 const auth = require('./auth')
-module.exports = (wsManager) => {
+
+const messages = require('./frontend/messages')
+
+module.exports = () => {
     const router = express.Router()
 
-    router.get('/auth/gateway/backend', require('./gateway/auth')(wsManager))
-
-    router.use(auth.jwt)
+    router.post('/frontend/messages/create', auth.jwt, messages.create)
+    router.get('/frontend/messages', auth.jwt, messages.getAll)
+    router.get('/frontend/messages/:id', auth.jwt, messages.get)
+    router.delete('/frontend/messages/:id', auth.jwt, messages.delete)
 
     return router
 }

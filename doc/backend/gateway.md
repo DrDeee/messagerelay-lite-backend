@@ -14,13 +14,6 @@
     "type": "verified",
 }
 ```
-- code - Containing a code to verify this websocket session
-```json
-{
-    "type": "code",
-    "code": "random string"
-}
-```
 - create - If a new message have to be send
 ```json
 {
