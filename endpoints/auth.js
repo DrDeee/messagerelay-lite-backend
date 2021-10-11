@@ -16,6 +16,7 @@ const jwtCheck = jwt({
 })
 
 const errorCheck = (err, req, res, next) => {
+    console.error('Error while logging in:', err)
     if (err.name === 'UnauthorizedError') {
         res.status(401).json({
             msg: 'Invalid auth token'
