@@ -24,8 +24,20 @@ const errorCheck = (err, req, res, next) => {
     }
 }
 
+let auth
+if (process.env.NOAUTH != undefined)
+    auth = [(req, res, next) => {
+        req['user'] = {
+            sub: '123-123-123-123',
+            preferred_username: 'Testuser'
+        }
+        next()
+    }]
+else
+    auth = [jwtCheck, errorCheck]
+
 module.exports = {
-    jwt: [jwtCheck, errorCheck],
+    jwt: auth,
     /*    requireCTF: [(req, res, next) => {
            if (req.user.groups != undefined && req.user.groups.includes('ctf')) {
                next()

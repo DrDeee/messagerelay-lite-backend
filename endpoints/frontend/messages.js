@@ -6,11 +6,13 @@ module.exports = {
             const msg = db().insert({
                 content: req.body.content,
                 target: req.body.target,
-                author: req.user.sub,
+                uid: req.user.sub,
+                author: req.user.preferred_username,
                 createdAt: new Date().getTime()
             })
             res.status(200).json({
                 id: msg.$loki,
+                uid: msg.uid,
                 content: msg.content,
                 target: msg.target,
                 author: msg.author,
@@ -42,6 +44,7 @@ module.exports = {
         for (const msg of entries) {
             msgs.push({
                 id: msg.$loki,
+                uid: msg.uid,
                 content: msg.content,
                 target: msg.target,
                 author: msg.author,
@@ -70,13 +73,13 @@ module.exports = {
             return
         }
         const msg = db().get(id)
-        console.log(msg)
         if (msg == null)
             res.status(404).json({
                 msg: 'Message not found'
             })
         else res.status(200).json({
             id: msg.$loki,
+            uid: msg.uid,
             content: msg.content,
             target: msg.target,
             author: msg.author,
