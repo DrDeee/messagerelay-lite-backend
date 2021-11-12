@@ -1,9 +1,12 @@
+const uuid = require('uuid')
+
 const db = require('../../database').messages
 const gateway = require('../../gateway/backend').handler
 module.exports = {
     create: (req, res) => {
         if (req.body.content && req.body.target && (req.body.target === 'wid' || req.body.target === 'iaow')) {
             const msg = db().insert({
+                id: uuid.v4(),
                 content: req.body.content,
                 target: req.body.target,
                 uid: req.user.sub,
@@ -11,7 +14,7 @@ module.exports = {
                 createdAt: new Date().getTime()
             })
             res.status(200).json({
-                id: msg.$loki,
+                id: msg.id,
                 uid: msg.uid,
                 content: msg.content,
                 target: msg.target,
@@ -21,7 +24,7 @@ module.exports = {
 
             gateway.dispatch({
                 type: 'create',
-                id: msg.$loki,
+                id: msg.id,
                 content: msg.content,
                 target: msg.target
             })
@@ -43,7 +46,7 @@ module.exports = {
         const msgs = []
         for (const msg of entries) {
             msgs.push({
-                id: msg.$loki,
+                id: msg.id,
                 uid: msg.uid,
                 content: msg.content,
                 target: msg.target,
@@ -60,25 +63,14 @@ module.exports = {
             })
             return
         }
-        let id
-        try {
-            id = Number.parseInt(req.params.id)
-            if (isNaN(id)) {
-                throw new Error()
-            }
-        } catch (e) {
-            res.status(400).json({
-                msg: 'Invalid parameter: id'
-            })
-            return
-        }
-        const msg = db().get(id)
+        let id = req.params.id
+        const msg = db().by('id', id)
         if (msg == null)
             res.status(404).json({
                 msg: 'Message not found'
             })
         else res.status(200).json({
-            id: msg.$loki,
+            id: msg.id,
             uid: msg.uid,
             content: msg.content,
             target: msg.target,
@@ -94,19 +86,9 @@ module.exports = {
             })
             return
         }
-        let id
-        try {
-            id = Number.parseInt(req.params.id)
-            if (isNaN(id)) {
-                throw new Error()
-            }
-        } catch (e) {
-            res.status(400).json({
-                msg: 'Invalid parameter: id'
-            })
-            return
-        }
-        const msg = db().get(id)
+
+        let id = req.params.id
+        const msg = db().by('id', id)
         if (msg != null) {
             db().remove(msg)
             gateway.dispatch({

@@ -25,7 +25,8 @@ module.exports = {
                 msgs = db.getCollection('messages')
                 if (msgs == null) {
                     msgs = db.addCollection('messages', {
-                        indices: ['author', 'id']
+                        unique: ['id'],
+                        indices: ['author']
                     })
                 }
             },
