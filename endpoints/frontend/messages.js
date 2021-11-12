@@ -11,6 +11,7 @@ module.exports = {
                 target: req.body.target,
                 uid: req.user.sub,
                 author: req.user.preferred_username,
+                deleted: false,
                 createdAt: new Date().getTime()
             })
             res.status(200).json({
@@ -19,6 +20,7 @@ module.exports = {
                 content: msg.content,
                 target: msg.target,
                 author: msg.author,
+                deleted: false,
                 createdAt: msg.createdAt
             })
 
@@ -49,6 +51,7 @@ module.exports = {
                 id: msg.id,
                 uid: msg.uid,
                 content: msg.content,
+                deleted: msg.deleted,
                 target: msg.target,
                 author: msg.author,
                 createdAt: msg.createdAt
@@ -74,6 +77,7 @@ module.exports = {
             uid: msg.uid,
             content: msg.content,
             target: msg.target,
+            deleted: msg.deleted,
             author: msg.author,
             createdAt: msg.createdAt
         })
@@ -90,7 +94,14 @@ module.exports = {
         let id = req.params.id
         const msg = db().by('id', id)
         if (msg != null) {
-            db().remove(msg)
+            if (msg.deleted == true) {
+                res.status(400).json({
+                    msg: 'Allready deleted'
+                })
+                return
+            }
+            msg.deleted = true
+            db().update(msg)
             gateway.dispatch({
                 type: 'delete',
                 id: id
